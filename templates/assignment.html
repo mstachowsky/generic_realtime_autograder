@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ assignment }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .logout {
+            display: block;
+            margin: 2em auto 0 auto;
+            padding: 1em 0 2em 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <h1>{{ assignment|capitalize }}</h1>
+    <h2>Student: {{ user }}</h2>
+    {% for q in questions %}
+    <form class="question-form" method="post" action="/submit" onsubmit="return submitForm(this, '{{q.id}}');">
+
+        <div class="question-block">
+            <div class="question-label"><b>Q{{loop.index}}:</b> {{ q.text }}</div>
+            <textarea name="answer" id="input_{{q.id}}" rows="3">{% if answers[q.id] %}{{ answers[q.id]["answer"] }}{% endif %}</textarea>
+            <input type="hidden" name="question" value="{{q.id}}">
+            <input type="hidden" name="assignment" value="{{assignment}}">
+            <button type="submit" class="submit-btn">Submit</button>
+            {% if answers[q.id] %}
+            <div class="feedback" id="feedback_{{q.id}}">
+                Feedback: {{ answers[q.id]["feedback"] }} (Grade: {{ answers[q.id]["grade"] }})
+            </div>
+            {% else %}
+            <div class="feedback" id="feedback_{{q.id}}"></div>
+            {% endif %}
+        </div>
+    </form>
+    {% endfor %}
+    <a class="logout" href="/logout">Logout</a>
+</div>
+<script>
+function setAllSubmitButtons(state) {
+    document.querySelectorAll('.submit-btn').forEach(btn => btn.disabled = state);
+}
+
+function submitForm(form, qid) {
+    setAllSubmitButtons(true);
+    const formData = new FormData(form);
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+    })
+    .then(response => response.json()) // assumes your backend returns JSON
+    .then(data => {
+        // update the feedback div for this question
+        document.getElementById('feedback_' + qid).textContent =
+            "Feedback: " + data.feedback + " (Grade: " + data.grade + ")";
+    })
+    .catch(() => {
+        document.getElementById('feedback_' + qid).textContent =
+            "Error: Could not submit answer.";
+    })
+    .finally(() => {
+        setAllSubmitButtons(false);
+    });
+
+    return false; // prevent default form submit
+}
+</script>
+</body>
+</html>

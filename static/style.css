@@ -1,0 +1,95 @@
+body {
+    background: #f4f8fb;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0; padding: 0;
+}
+.main-container, .login-container {
+    max-width: 520px;
+    background: #fff;
+    margin: 3em auto;
+    padding: 2em 2.5em;
+    border-radius: 16px;
+    box-shadow: 0 3px 24px rgba(0,0,0,0.09);
+}
+h1, h2 {
+    margin: 0 0 1em 0;
+    color: #193866;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+ul {
+    list-style: none;
+    padding: 0;
+}
+li {
+    margin: 0.7em 0;
+}
+a, .logout {
+    color: #2875e0;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+a:hover, .logout:hover {
+    color: #184999;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+input, textarea, button {
+    font-size: 1em;
+    padding: 0.7em;
+    border: 1px solid #c5d0db;
+    border-radius: 10px;
+    background: #f7fafc;
+    margin-top: 0.2em;
+}
+button {
+    background: #2875e0;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.8em;
+    box-shadow: 0 2px 6px rgba(40,117,224,0.10);
+    transition: background 0.15s;
+}
+button:hover {
+    background: #184999;
+}
+.question-block {
+    margin-bottom: 2.2em;
+    padding: 1em 1em 1.5em 1em;
+    border-radius: 12px;
+    background: #f6faff;
+    border-left: 5px solid #2875e0;
+    box-shadow: 0 2px 8px rgba(25,56,102,0.03);
+}
+.question-label {
+    font-size: 1.13em;
+    color: #244674;
+    margin-bottom: 0.5em;
+    font-weight: 500;
+}
+.feedback {
+    margin-top: 0.8em;
+    padding: 0.5em 1em;
+    background: #e7f8eb;
+    border-left: 4px solid #39b976;
+    border-radius: 8px;
+    color: #1e5c39;
+    font-size: 1em;
+}
+.error {
+    color: #ce2222;
+    margin-top: 1em;
+    font-size: 1.05em;
+}
+.logout {
+    display: inline-block;
+    margin-top: 1.6em;
+    font-size: 0.97em;
+    float: right;
+}
