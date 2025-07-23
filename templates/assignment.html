@@ -50,11 +50,20 @@ function submitForm(form, qid) {
         body: formData,
         credentials: 'same-origin'
     })
-    .then(response => response.json()) // assumes your backend returns JSON
+    .then(response => response.json())
     .then(data => {
-        // update the feedback div for this question
-        document.getElementById('feedback_' + qid).textContent =
-            "Feedback: " + data.feedback + " (Grade: " + data.grade + ")";
+        const feedbackDiv = document.getElementById('feedback_' + qid);
+        if ('message' in data) {
+            // Offline mode: only show message
+            feedbackDiv.textContent = data.message;
+        } else if ('feedback' in data && 'grade' in data) {
+            // Online mode: show feedback/grade
+            feedbackDiv.textContent = "Feedback: " + data.feedback + " (Grade: " + data.grade + ")";
+        } else if ('error' in data) {
+            feedbackDiv.textContent = "Error: " + data.error;
+        } else {
+            feedbackDiv.textContent = "Unexpected response.";
+        }
     })
     .catch(() => {
         document.getElementById('feedback_' + qid).textContent =

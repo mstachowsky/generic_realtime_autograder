@@ -8,6 +8,8 @@ from fastapi.templating import Jinja2Templates
 import mysql.connector
 from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime
+import time
+import shutil
 from uw_llm import *
 
 app = FastAPI()
@@ -22,6 +24,8 @@ DB_CONFIG = {
     'database': 'assignmentsdb',
 }
 
+grade_mode = "offline"
+
 def get_db():
     conn = mysql.connector.connect(**DB_CONFIG)
     return conn
@@ -34,9 +38,9 @@ def load_users():
             users[row["username"]] = row["password"]
     return users
 
-def autograde(answer: str, question_path: str, rubric_path: str):
-    # Example: load both files
-    
+
+def autograde(answer: str, question_path: str, rubric_path: str, username: str, assignment: str, question_id: str):
+    # Load question and rubric text
     question = ""
     rubric = ""
     if os.path.exists(question_path):
@@ -45,24 +49,36 @@ def autograde(answer: str, question_path: str, rubric_path: str):
     if os.path.exists(rubric_path):
         with open(rubric_path) as f:
             rubric = f.read()
-    
-    prompt = f"""
-        You are a helpful teaching assistant. You are providing feedback to students. The question they were asked is: {question}.
-        
-        The rubric is: {rubric}
-        
-        The student answer is: {answer}
-        
-        Use the rubric to provide feedback on the student work. First, you must output the exact string "meets expectations" or "does not meet expectations", then provide brief feedback to the student.
-    """
-    
-    response = generate(prompt)
-    grade = 0
-    if "meets expectations" in response.lower():
-        grade = 1
-    
-    # Example: feedback includes both
-    return grade, response
+
+    if grade_mode != "offline":
+        prompt = f"""
+            You are a helpful teaching assistant. You are providing feedback to students. The question they were asked is: {question}.
+            
+            The rubric is: {rubric}
+            
+            The student answer is: {answer}
+            
+            Use the rubric to provide feedback on the student work. First, you must output the exact string "meets expectations" or "does not meet expectations", then provide brief feedback to the student.
+        """
+        response = generate(prompt)
+        grade = 1 if "meets expectations" in response.lower() else 0
+        return grade, response
+    else:
+        # Generate markdown input for offline grader
+        filename = f"{username}_{assignment}_{question_id}.txt"
+        final_path = os.path.join("to_grade", filename)
+        if os.path.exists(final_path):
+            return None, None, True  # Already queued
+        temp_path = os.path.join("/tmp", filename)
+        with open(temp_path, "w", encoding="utf-8") as f:
+            f.write(f"# username\n{username}\n")
+            f.write(f"# assignment\n{assignment}\n")
+            f.write(f"# question\n{question_id}\n")
+            f.write(f"# question_text\n{question}\n")
+            f.write(f"# rubric\n{rubric}\n")
+            f.write(f"# answer\n{answer}\n")
+        shutil.move(temp_path, final_path)
+        return None, None, False  # Successfully queued
 
 
 
@@ -144,26 +160,32 @@ def assignment_page(request: Request, assignment: str):
         "user": user
     })
 
-
 @app.post("/submit")
 async def submit(request: Request, assignment: str = Form(...), question: str = Form(...), answer: str = Form(...)):
     user = request.session.get("user")
     if not user:
-        # AJAX: send error JSON, not redirect
         return JSONResponse({"error": "Not logged in"}, status_code=401)
     path = f"assignments/{assignment}/"
     question_path = os.path.join(path, f"{question}.txt")
     rubric_path = os.path.join(path, f"rubric_{question}.txt")
-    grade, feedback = autograde(answer, question_path, rubric_path)
 
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO answers (username, assignment, question, answer, grade, feedback) VALUES (%s,%s,%s,%s,%s,%s)",
-        (user, assignment, question, answer, grade, feedback)
-    )
-    conn.commit()
-    cursor.close()
-    conn.close()
-    # AJAX: return JSON for the frontend JS
-    return JSONResponse({"feedback": feedback, "grade": grade})
+    if grade_mode != "offline":
+        grade, feedback, _ = autograde(answer, question_path, rubric_path, user, assignment, question)
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO answers (username, assignment, question, answer, grade, feedback) VALUES (%s,%s,%s,%s,%s,%s)",
+            (user, assignment, question, answer, grade, feedback)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return JSONResponse({"feedback": feedback, "grade": grade})
+    else:
+        grade, feedback, already_queued = autograde(answer, question_path, rubric_path, user, assignment, question)
+        if already_queued:
+            msg = "Your question is already in the queue. Please wait for the email response before attempting to submit again."
+            return JSONResponse({"message": msg})
+        else:
+            msg = "Your request has been submitted and is in the queue. Check your email for feedback. You may safely continue working on this assignment."
+            return JSONResponse({"message": msg})
