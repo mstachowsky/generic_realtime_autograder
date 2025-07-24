@@ -1,0 +1,1 @@
+The correct answer is that the wait time increases to infinity if we exceed the maximum number. The number itself does not matter - since it is asymptotic behaviour, the wait time approaches infinity no matter what. Do not tell the students this if they get it wrong. Instead, just ask probing questions to get them on the right track.

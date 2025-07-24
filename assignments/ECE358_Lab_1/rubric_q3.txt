@@ -1,0 +1,1 @@
+To meet expectations, the student must provide a logical, well-justified answer. This answer must involve running the server and varying the number of documents. The answer will be different for each student, but they should present more than just a single number or a short sentence.

@@ -1,0 +1,1 @@
+The students must provide a well-reasoned answer that shows that they ran experiments. You do not need to know their value for the constant C, you may simply assume that they used a correct value. The exact answer does not matter, but the justification of the answer should be sound and well-reasoned. Look for 2-3 clear and well explained points that support their answer.

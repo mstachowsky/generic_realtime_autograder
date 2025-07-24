@@ -1,0 +1,3 @@
+## Question: Assuming we are OK with a packet loss rate of 1 percent, and that we expect documents to be an average of 250 tokens, what is the average number of requests per second we can handle before we exceed that rate? Note that this will depend on the number of documents sent to the server per request, so we are interested in seeing the average as a function of the number of documents.
+
+You must provide your answer and a reasonable justification of your answer suitable for a 3rd year engineering student. 

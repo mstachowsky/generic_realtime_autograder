@@ -1,0 +1,1 @@
+Look for a reasonable function that relates C to Lp. Use your best judgement here. Students are expected to figure this out experimentally and there is no single right answer, so as long as C increases when Lp increases, consider it correct.

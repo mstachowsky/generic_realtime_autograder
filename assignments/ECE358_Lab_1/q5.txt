@@ -1,0 +1,3 @@
+## Question: Our server has 100MB of RAM that can be allocated to packets. What is the maximum number of requests per second of an average of 10 documents of an average of 1000 tokens (strings in the document split on whitespace and punctuation) in length that we can process before we start to drop packets if $n = 5$? Note: this will depend on your own experiments and your own function for C. There is no single right answer, but you can expect that your answers and your friends' answers should match the same order of magnitude.
+
+You must provide your answer and a reasonable justification of your answer suitable for a 3rd year engineering student. 

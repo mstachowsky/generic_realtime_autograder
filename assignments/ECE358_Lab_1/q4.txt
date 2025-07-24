@@ -1,0 +1,1 @@
+## Question: What happens when we exceed this maximum number and run the server continuously? What is the expected wait time for new packets as time approaches infinity? Consider the K = infinity case only here.

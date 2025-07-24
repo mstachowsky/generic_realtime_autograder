@@ -1,0 +1,1 @@
+To meet expectations, the student must present a reasonable, justified procedure for experimentally verifying the server. This should include a discussion of the inputs they tried, why they tried them, what they expected, and what results they obtained.

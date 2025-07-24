@@ -1,16 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>{{ assignment }}</title>
     <link rel="stylesheet" href="/static/style.css">
-    <style>
-        .logout {
-            display: block;
-            margin: 2em auto 0 auto;
-            padding: 1em 0 2em 0;
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
 <div class="main-container">
@@ -18,19 +11,18 @@
     <h2>Student: {{ user }}</h2>
     {% for q in questions %}
     <form class="question-form" method="post" action="/submit" onsubmit="return submitForm(this, '{{q.id}}');">
-
         <div class="question-block">
-            <div class="question-label"><b>Q{{loop.index}}:</b> {{ q.text }}</div>
-            <textarea name="answer" id="input_{{q.id}}" rows="3">{% if answers[q.id] %}{{ answers[q.id]["answer"] }}{% endif %}</textarea>
-            <input type="hidden" name="question" value="{{q.id}}">
-            <input type="hidden" name="assignment" value="{{assignment}}">
+            <div class="question-label"><b>Q{{ loop.index }}:</b> {{ q.text }}</div>
+            <textarea name="answer" id="input_{{ q.id }}" rows="12" autocomplete="off">{% if answers[q.id] %}{{ answers[q.id]["answer"] }}{% endif %}</textarea>
+            <input type="hidden" name="question" value="{{ q.id }}">
+            <input type="hidden" name="assignment" value="{{ assignment }}">
             <button type="submit" class="submit-btn">Submit</button>
             {% if answers[q.id] %}
-            <div class="feedback" id="feedback_{{q.id}}">
+            <div class="feedback" id="feedback_{{ q.id }}">
                 Feedback: {{ answers[q.id]["feedback"] }} (Grade: {{ answers[q.id]["grade"] }})
             </div>
             {% else %}
-            <div class="feedback" id="feedback_{{q.id}}"></div>
+            <div class="feedback" id="feedback_{{ q.id }}"></div>
             {% endif %}
         </div>
     </form>
@@ -54,10 +46,8 @@ function submitForm(form, qid) {
     .then(data => {
         const feedbackDiv = document.getElementById('feedback_' + qid);
         if ('message' in data) {
-            // Offline mode: only show message
             feedbackDiv.textContent = data.message;
         } else if ('feedback' in data && 'grade' in data) {
-            // Online mode: show feedback/grade
             feedbackDiv.textContent = "Feedback: " + data.feedback + " (Grade: " + data.grade + ")";
         } else if ('error' in data) {
             feedbackDiv.textContent = "Error: " + data.error;
@@ -72,7 +62,6 @@ function submitForm(form, qid) {
     .finally(() => {
         setAllSubmitButtons(false);
     });
-
     return false; // prevent default form submit
 }
 </script>

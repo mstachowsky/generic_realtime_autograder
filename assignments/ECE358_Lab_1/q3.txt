@@ -1,0 +1,1 @@
+## Question: What is the maximum average number of documents of an average length of 1000 characters that can be processed in one minute when $n = 2$, assuming we have no restrictions on queue length? You must provide your answer and a reasonable justification of your answer suitable for a 3rd year engineering student. 

@@ -1,1 +1,0 @@
-The answer should be 4. Output "meets expectations" if it is 4. Output "does not meet expectations" if it is not 4. Provide brief feedback.

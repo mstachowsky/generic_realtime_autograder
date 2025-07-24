@@ -1,15 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Assignments</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            background: #f7fafc;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            margin: 0;
+        }
+        .main-container {
+            max-width: 480px;
+            margin: 4em auto;
+            padding: 2.2em 2em 2.2em 2em;
+            border-radius: 32px;
+            background: #fff;
+            box-shadow: 0 8px 32px rgba(40,117,224,0.07), 0 1.5px 10px rgba(50,60,110,0.08);
+            position: relative;
+        }
+        h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #183766;
+            margin-top: 0;
+            margin-bottom: 1.5em;
+            letter-spacing: 0.01em;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0 0 2.5em 0;
+        }
+        li {
+            margin-bottom: 1.2em;
+        }
+        .assignment-link {
+            display: block;
+            background: linear-gradient(90deg, #eaf3fc 0%, #f6fafd 100%);
+            color: #2254c6;
+            font-size: 1.17em;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 1em 1.4em;
+            border-radius: 15px;
+            box-shadow: 0 2px 12px rgba(40,117,224,0.07);
+            transition: 
+                background 0.2s,
+                color 0.18s,
+                box-shadow 0.2s,
+                transform 0.12s;
+            position: relative;
+            overflow: hidden;
+        }
+        .assignment-link::after {
+            content: "→";
+            position: absolute;
+            right: 1.2em;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #379ce4;
+            font-size: 1.2em;
+            opacity: 0.8;
+            transition: right 0.2s;
+        }
+        .assignment-link:hover,
+        .assignment-link:focus {
+            background: linear-gradient(90deg, #d4e6fa 0%, #e0f0ff 100%);
+            color: #2875e0;
+            box-shadow: 0 6px 24px rgba(40,117,224,0.13);
+            transform: translateY(-3px) scale(1.02);
+        }
+        .assignment-link:hover::after,
+        .assignment-link:focus::after {
+            right: 0.8em;
+            color: #2875e0;
+        }
+        .logout {
+            display: inline-block;
+            position: absolute;
+            bottom: 1.2em;
+            right: 2em;
+            font-size: 1.13em;
+            color: #2875e0;
+            text-decoration: none;
+            transition: color 0.14s;
+        }
+        .logout:hover {
+            color: #2254c6;
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .main-container {
+                max-width: 95vw;
+                padding: 1.3em 0.6em 1em 0.6em;
+            }
+            .logout {
+                right: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="main-container">
     <h1>Select Assignment</h1>
     <ul>
     {% for a in assignments %}
-        <li><a href="/assignment/{{a}}">{{a}}</a></li>
+        <li><a href="/assignment/{{a}}" class="assignment-link">{{a}}</a></li>
     {% endfor %}
     </ul>
     <a class="logout" href="/logout">Logout</a>
