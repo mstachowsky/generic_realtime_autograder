@@ -1,0 +1,1 @@
+## Question: Compute the zeros of a generic quadratic y = ax^2 + bx + c. Show your work

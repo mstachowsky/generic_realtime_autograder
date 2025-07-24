@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h1 style="font-size:2em; font-weight:bold; margin-bottom:1.5em;">Assignment Admin</h1>
+  <form action="/admin/assignments/new" method="post" style="display:flex; gap:1em; align-items:center; margin-bottom:2em;">
+    <input name="name" placeholder="New Assignment Name" required style="flex:1;">
+    <button type="submit">Create</button>
+  </form>
+  <div>
+    {% for a in assignments %}
+      <div class="bg-white flex" style="align-items:center; justify-content:space-between; margin-bottom:1em;">
+        <div>
+          <a href="/admin/assignment/{{a}}" style="font-size:1.2em; font-weight:600; color:#2563eb; text-decoration:none;">{{a}}</a>
+        </div>
+        <button class="delete" onclick="showDeleteModal('{{a}}')" type="button">Delete</button>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="deleteModal" class="modal-bg" style="display:none;">
+  <div class="modal">
+    <h2 style="font-size:1.1em; font-weight:bold; margin-bottom:0.5em;">Delete Assignment</h2>
+    <form id="deleteForm" action="/admin/assignments/delete" method="post">
+      <input id="deleteName" name="name" type="hidden">
+      <p>Type the name to confirm:</p>
+      <input id="deleteConfirm" name="confirm" required>
+      <div style="display:flex; gap:1em; margin-top:1em;">
+        <button type="submit" class="delete">Delete</button>
+        <button type="button" onclick="hideDeleteModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function showDeleteModal(name) {
+  document.getElementById('deleteModal').style.display = 'flex';
+  document.getElementById('deleteName').value = name;
+  document.getElementById('deleteConfirm').value = "";
+}
+function hideDeleteModal() {
+  document.getElementById('deleteModal').style.display = 'none';
+}
+</script>
+{% endblock %}

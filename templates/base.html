@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Assignments Admin{% endblock %}</title>
+  <link rel="stylesheet" href="/static/admin_style.css">
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+  <nav class="bg-blue-700 p-4 shadow text-white mb-8">
+    <div class="container mx-auto flex justify-between items-center max-w-4xl">
+      <a href="/" class="font-bold text-xl">Assignment System</a>
+      {% if user %}
+        <div class="flex items-center gap-4">
+          <span class="font-semibold">{{user}}</span>
+          <a href="/logout" class="underline text-white hover:text-gray-200">Logout</a>
+        </div>
+      {% endif %}
+    </div>
+  </nav>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

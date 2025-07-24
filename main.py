@@ -24,6 +24,8 @@ DB_CONFIG = {
     'database': 'assignmentsdb',
 }
 
+# Global config
+ADMIN_USER = "mstachow"
 grade_mode = "offline"
 
 def get_db():
@@ -80,6 +82,82 @@ def autograde(answer: str, question_path: str, rubric_path: str, username: str, 
         shutil.move(temp_path, final_path)
         return None, None, False  # Successfully queued
 
+@app.get("/admin/assignments", response_class=HTMLResponse)
+def admin_assignments(request: Request):
+    user = request.session.get("user")
+    if user != ADMIN_USER:
+        return RedirectResponse(url="/login")
+    assignment_dirs = [d for d in os.listdir("assignments") if os.path.isdir(os.path.join("assignments", d))]
+    return templates.TemplateResponse("admin_assignments.html", {"request": request, "assignments": assignment_dirs, "user": user})
+
+@app.post("/admin/assignments/new")
+async def create_assignment(request: Request, name: str = Form(...)):
+    user = request.session.get("user")
+    if user != ADMIN_USER:
+        return JSONResponse({"error": "Unauthorized"}, status_code=403)
+    path = os.path.join("assignments", name)
+    if not os.path.exists(path):
+        os.makedirs(path)
+        return RedirectResponse(url="/admin/assignments", status_code=303)
+    else:
+        return JSONResponse({"error": "Assignment already exists"}, status_code=400)
+
+@app.post("/admin/assignments/delete")
+async def delete_assignment(request: Request, name: str = Form(...), confirm: str = Form(...)):
+    user = request.session.get("user")
+    if user != ADMIN_USER:
+        return JSONResponse({"error": "Unauthorized"}, status_code=403)
+    if name != confirm:
+        return JSONResponse({"error": "Confirmation does not match"}, status_code=400)
+    path = os.path.join("assignments", name)
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    return RedirectResponse(url="/admin/assignments", status_code=303)
+
+@app.get("/admin/assignment/{assignment}", response_class=HTMLResponse)
+def edit_assignment(request: Request, assignment: str):
+    user = request.session.get("user")
+    if user != ADMIN_USER:
+        return RedirectResponse(url="/login")
+    path = os.path.join("assignments", assignment)
+    questions = []
+    for f in sorted(glob.glob(os.path.join(path, "q*.txt"))):
+        q_id = os.path.splitext(os.path.basename(f))[0]
+        qtext = open(f).read()
+        rubric_path = os.path.join(path, f"rubric_{q_id}.txt")
+        rubric = open(rubric_path).read() if os.path.exists(rubric_path) else ""
+        questions.append({"id": q_id, "text": qtext, "rubric": rubric})
+    return templates.TemplateResponse("admin_assignment.html", {"request": request, "assignment": assignment, "questions": questions, "user": user})
+
+@app.post("/admin/assignment/{assignment}/question")
+async def add_or_update_question(request: Request, assignment: str, qid: str = Form(...), qtext: str = Form(...), rubric: str = Form(...)):
+    user = request.session.get("user")
+    if user != ADMIN_USER:
+        return JSONResponse({"error": "Unauthorized"}, status_code=403)
+    path = os.path.join("assignments", assignment)
+    with open(os.path.join(path, f"{qid}.txt"), "w") as qf:
+        if "## Question: " not in qtext:
+            qtext = "## Question: " + qtext
+        qf.write(qtext)
+    with open(os.path.join(path, f"rubric_{qid}.txt"), "w") as rf:
+        rf.write(rubric)
+    return RedirectResponse(url=f"/admin/assignment/{assignment}", status_code=303)
+
+@app.post("/admin/assignment/{assignment}/question/delete")
+async def delete_question(request: Request, assignment: str, qid: str = Form(...), confirm: str = Form(...)):
+    user = request.session.get("user")
+    if user != ADMIN_USER:
+        return JSONResponse({"error": "Unauthorized"}, status_code=403)
+    if qid != confirm:
+        return JSONResponse({"error": "Confirmation does not match"}, status_code=400)
+    path = os.path.join("assignments", assignment)
+    q_path = os.path.join(path, f"{qid}.txt")
+    r_path = os.path.join(path, f"rubric_{qid}.txt")
+    if os.path.exists(q_path):
+        os.remove(q_path)
+    if os.path.exists(r_path):
+        os.remove(r_path)
+    return RedirectResponse(url=f"/admin/assignment/{assignment}", status_code=303)
 
 
 @app.get("/", response_class=HTMLResponse)

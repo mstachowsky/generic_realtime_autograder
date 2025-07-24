@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h1 style="font-size:1.6em; font-weight:bold; margin-bottom:1em;">Edit Assignment: {{assignment}}</h1>
+  <form action="/admin/assignment/{{assignment}}/question" method="post" class="bg-white" style="margin-bottom:2em; padding:1em; border-radius:0.75em; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+    <h2 style="font-size:1.1em; font-weight:600; margin-bottom:0.5em;">Add / Update Question</h2>
+    <div style="margin-bottom:0.8em;">
+      <input name="qid" placeholder="Question ID (e.g. q1)" required style="width:10em;">
+    </div>
+    <div style="margin-bottom:0.8em;">
+      <textarea name="qtext" placeholder="Question text..." required style="height:4em;"></textarea>
+    </div>
+    <div style="margin-bottom:0.8em;">
+      <textarea name="rubric" placeholder="Rubric text..." style="height:4em;"></textarea>
+    </div>
+    <button type="submit">Save</button>
+    <button type="button" onclick="resetQuestionForm()">Add New</button>
+  </form>
+  <div>
+    {% for q in questions %}
+      <div class="bg-white" style="border-radius:0.75em; box-shadow:0 2px 8px rgba(0,0,0,0.04); padding:1em; margin-bottom:1em;">
+        <div class="flex" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5em;">
+          <span style="font-weight:bold; font-size:1.1em;">{{q.id}}</span>
+          <div>
+            <button class="edit" type="button"
+    onclick='editQuestion({{ q.id|tojson }}, {{ (q.text or "")|tojson }}, {{ (q.rubric or "")|tojson }})'>
+    Edit
+</button>
+
+            <button class="delete" type="button" onclick="showDeleteQModal({{ q.id|tojson }})">Delete</button>
+          </div>
+        </div>
+        <div style="margin-bottom:0.5em;">
+          <div style="font-weight:600;">Question:</div>
+          <div style="white-space:pre-line;">{{q.text}}</div>
+        </div>
+        <div>
+          <div style="font-weight:600;">Rubric:</div>
+          <div style="white-space:pre-line; color:#555;">{{q.rubric}}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="deleteQModal" class="modal-bg" style="display:none;">
+  <div class="modal">
+    <h2 style="font-size:1.1em; font-weight:bold; margin-bottom:0.5em;">Delete Question</h2>
+    <form id="deleteQForm" action="/admin/assignment/{{assignment}}/question/delete" method="post">
+      <input id="deleteQid" name="qid" type="hidden">
+      <p>Type the question ID to confirm:</p>
+      <input id="deleteQConfirm" name="confirm" required>
+      <div style="display:flex; gap:1em; margin-top:1em;">
+        <button type="submit" class="delete">Delete</button>
+        <button type="button" onclick="hideDeleteQModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function showDeleteQModal(qid) {
+  document.getElementById('deleteQModal').style.display = 'flex';
+  document.getElementById('deleteQid').value = qid;
+  document.getElementById('deleteQConfirm').value = "";
+}
+function hideDeleteQModal() {
+  document.getElementById('deleteQModal').style.display = 'none';
+}
+
+function editQuestion(qid, qtext, rubric) {
+  document.querySelector('input[name="qid"]').value = qid;
+  document.querySelector('input[name="qid"]').readOnly = true;  // Prevent changing the ID
+  document.querySelector('textarea[name="qtext"]').value = qtext;
+  document.querySelector('textarea[name="rubric"]').value = rubric;
+}
+
+function resetQuestionForm() {
+  document.querySelector('input[name="qid"]').value = "";
+  document.querySelector('input[name="qid"]').readOnly = false;
+  document.querySelector('textarea[name="qtext"]').value = "";
+  document.querySelector('textarea[name="rubric"]').value = "";
+}
+</script>
+{% endblock %}

@@ -1,0 +1,97 @@
+body {
+  background: #f6f8fa;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+nav {
+  background: #2563eb;
+  color: white;
+  padding: 1em 0;
+  margin-bottom: 2em;
+}
+
+nav .container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2em;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1, h2 {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+input, textarea, button {
+  font-size: 1em;
+}
+
+input, textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 0.375em;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 0.375em;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  margin-right: 0.5em;
+}
+
+button.delete {
+  background: #dc2626;
+}
+
+.bg-white {
+  background: white;
+  border-radius: 0.75em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 1em;
+  margin-bottom: 1em;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal {
+  background: white;
+  border-radius: 1em;
+  padding: 2em;
+  max-width: 350px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}

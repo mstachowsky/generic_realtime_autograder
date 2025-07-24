@@ -51,7 +51,7 @@ def autograde(answer: str, question: str, rubric: str):
         
         Use the rubric to provide feedback on the student work. First, you must output the exact string "meets expectations" or "does not meet expectations", then provide brief feedback to the student.
     """
-    response = generate(prompt)
+    response = generate(prompt,reasoning=True)
     grade = 1 if "meets expectations" in response.lower() else 0
     return grade, response
 
